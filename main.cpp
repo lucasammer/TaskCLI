@@ -1,6 +1,14 @@
 #include <iostream>
 #include <filesystem>
 #include <fstream>
+#include <json.hpp>
+
+using json = nlohmann::json;
+
+struct config
+{
+    std::string listFile;
+};
 
 int main(int argc, char *argv[])
 {
@@ -19,9 +27,14 @@ int main(int argc, char *argv[])
     if (!std::filesystem::exists("./.config"))
     {
         std::ofstream configFile("./.config");
-        configFile << "";
+        json defaultConfig;
+        defaultConfig["listFile"] = "./.list";
+        configFile << defaultConfig;
         configFile.close();
-        std::cout << "created .config file" << std::endl;
+        std::ofstream listFile("./.list");
+        listFile << "";
+        listFile.close();
+        std::cout << "created .config and .list file" << std::endl;
     }
     else
     {
