@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     bool verbose = false;
     for (int i = 0; i < argc; i++)
     {
-        if (argv[i] == "-v" || argv[i] == "--verbose")
+        if (argv[i] == (std::string) "-v" || argv[i] == (std::string) "--verbose")
         {
             verbose = true;
         }
@@ -57,7 +57,8 @@ int main(int argc, char *argv[])
 
         while (std::getline(configFile, configContent))
         {
-            std::cout << configContent << std::endl;
+            if (verbose)
+                std::cout << configContent << std::endl;
             configuration = json::parse(configContent);
         }
 
@@ -66,6 +67,32 @@ int main(int argc, char *argv[])
 
     if (verbose)
         std::cout << "list file name: " << configuration["listFile"] << std::endl;
+
+    if (argv[1] == (std::string) "list")
+    {
+        if (verbose)
+        {
+            std::cout << "Listing items..." << std::endl;
+        }
+        std::ifstream listStream(configuration["listFile"]);
+        std::string listString;
+        std::vector<std::string> items;
+        while (std::getline(listStream, listString))
+        {
+            items.push_back(listString);
+        }
+
+        listStream.close();
+
+        for (std::string &currItem : items)
+        {
+            std::cout << &currItem - &items[0] + 1 << ". " << currItem << std::endl;
+        }
+    }
+    else
+    {
+        std::cout << argv[1] << " is not a valid instruction!" << std::endl;
+    }
 
     return 0;
 }
